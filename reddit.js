@@ -60,6 +60,11 @@ app.get("/create_account",(req,res)=>{
     res.render("new_account",{})
 })
 
+app.get("/profil",(req,res)=>{
+    
+    res.render("profil",{})
+})
+
 
 
 app.post("/insert",async(req,res)=>{

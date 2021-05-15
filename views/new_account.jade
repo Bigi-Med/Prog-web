@@ -16,29 +16,30 @@ html(lang='en')
         br
         h4.text-danger Meet your friends and don't forget to KEEP-in-touch !
       .mx-auto(style='width: 300px;')
-        .shadow-lg.p-3.mt-5.bg-body.rounded-3
-         .text-center.mb-4
-          <img class="rounded-circle" src= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1VTcdzIfHrD1mnqlyyYKPHFSOvDM4YCOVIA&usqp=CAU" alt="" width="150" height="120" />
-          .mb-3
-            label.form-label(for='exampleInputEmail1') 
-            input#exampleInputEmail1.form-control(name='mail' type='email' placeholder='Email address' aria-describedby='emailHelp' required='')
-          #emailHelp.form-text  
-          .mb-3
-            label.form-label(for='validationServerUsername')
-            input#validationServerUsername.form-control(name= 'pseudo' type='text' placeholder='Username' aria-describedby='inputGroupPrepend3' required='')
-          .mb-3
-          if(data)
-            if(data.error_pseudo)
-              button.btn.btn-danger(type='button')= data.error_pseudo
+        .card.bg-light
+          .card-body
+            .text-center.mb-4
+              <img class="rounded-circle" src= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1VTcdzIfHrD1mnqlyyYKPHFSOvDM4YCOVIA&usqp=CAU" alt="" width="150" height="120" />
               .mb-3
-          label.form-label(for='exampleInputPassword1')
-          input#exampleInputPassword1.form-control(name= 'pass' type='password' placeholder='Password' required='')
-          .mb-3
-          if(data)
-            if(data.error_pass)
-              button.btn.btn-danger(type='button')= data.error_pass
+                label.form-label(for='exampleInputEmail1') 
+                input#exampleInputEmail1.form-control(name='mail' type='email' placeholder='Email address' aria-describedby='emailHelp' required='')
+              #emailHelp.form-text  
               .mb-3
-          button.btn.btn-primary(type='submit') Create account
+                label.form-label(for='validationServerUsername')
+                input#validationServerUsername.form-control(name= 'pseudo' type='text' placeholder='Username' aria-describedby='inputGroupPrepend3' required='')
+              .mb-3
+              if(data)
+                if(data.error_pseudo)
+                  button.btn.btn-danger(type='button')= data.error_pseudo
+                  .mb-3
+              label.form-label(for='exampleInputPassword1')
+              input#exampleInputPassword1.form-control(name= 'pass' type='password' placeholder='Password' required='')
+              .mb-3
+              if(data)
+                if(data.error_pass)
+                  button.btn.btn-danger(type='button')= data.error_pass
+                  .mb-3
+              button.btn.btn-primary(type='submit') Create account
       br
       br
       footer.py-5.bg-dark
