@@ -26,8 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));  // support encoded bodies
 app.set('views', './views');
 app.set('view engine', 'jade');
 
-let fields= [] // array will containe our database 024 135
- let max = 1// max lines in database
+
 
 app.get("/",async(req,res) => {
    /* const db = await openDb()  
@@ -150,9 +149,9 @@ app.post("/login",async(req,res)=>{
     console.log(ins_pseudo_name);
     console.log(ins_acc_pass);*/
 
-     let email_id = await db.all(' SELECT id FROM EMAIL WHERE email  LIKE "%'+ ins_email +'%" ') 
-     let pseudo_id = await db.all(' SELECT id FROM PSEUDO WHERE pseudo  LIKE "%'+ ins_pseudo_name +'%" ') 
-     let password_id = await db.all(' SELECT id FROM PASSWORD WHERE password   LIKE "%' + ins_acc_pass + '%" ') 
+     let email_id = await db.all(' SELECT id FROM EMAIL WHERE email = ?',[ins_email]) 
+     let pseudo_id = await db.all(' SELECT id FROM PSEUDO WHERE pseudo = ? ',[ins_pseudo_name]) 
+     let password_id = await db.all(' SELECT id FROM PASSWORD WHERE password  = ?' ,[ins_acc_pass]) 
     
      /*console.log(typeof email_id)
      console.log(email_id.length)
@@ -218,7 +217,7 @@ app.post("/login",async(req,res)=>{
                 d_pseudo : ins_pseudo_name,
                 d_pass : ins_acc_pass
             }
-            console.log(data)
+            
             res.render('accueil',data)
           }
           else{
