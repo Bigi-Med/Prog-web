@@ -34,8 +34,8 @@ html(lang='en')
     .container
       .row
         .col-lg-3
-          if(data)
-            h1.my-4= 'Bonjour '  + data.d_pseudo +' !'
+          
+          h1.my-4= 'Bonjour  !'
           .card(style='width: 15rem;')
             .card-header
               | This is what you missed ! keep in touch go !
@@ -47,12 +47,12 @@ html(lang='en')
           .shadow.p-3.mb-5.bg-white.rounded 
             .card-body
               h3.card-title Create a post : 
-              form
-                textarea.form-control.ml-1.shadow-none.textarea( placeholder='Add a post')
-              br
-              a.button.btn.btn-primary(type='submit')
-                  span.fa.fa-send(style='color:#4f4;')
-                  |  Post
+              form(action='/accueil' method='post')
+                textarea.input.form-control.ml-1.shadow-none.textarea(name= 'my_post' placeholder='Add a post')
+                br
+                button.a.btn.btn-primary(type='submit')
+                    span.fa.fa-send(style='color:#4f4;')
+                    |  Post
           .shadow.p-3.mb-2.bg-white.rounded 
             .card.text-center
               .card-header
@@ -79,21 +79,16 @@ html(lang='en')
                             span.d-block.font-weight-bold.name User Name
                             span.date.text-black-50 Shared publicly - Jan 2020
                         .mt-2
-                          p.comment-text
-                            | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        if(data_f)
+                          p= data_f.post
+                            
                       hr
                       .bg-white
                         .d-flex.flex-row.fs-12
-                          .btn
-                            button.btn.btn-outline-success.my-2.my-sm-0(type='button')
-                              span.fas.fa-angle-double-up(style='color:#4f4;')
-                              | UpVote
-                              span.badge.bg-secondary  4
-                            button.btn.btn-outline-danger.my-2.my-sm-0(type='button')
-                              span.fas.fa-angle-double-down(style='color:$red-500;')
-                              | DownVote
-                              span.badge.bg-secondary 4
-                            bg-light.p-2
+                            button#testBtn.btn.btn-success.glyphicon.glyphicon-thumbs-up(type='button' data-loading-text=' ... ')
+                              | 4
+                            button#testBtnDown.btn.btn-success.glyphicon.glyphicon-thumbs-down(type='button' data-loading-text=' ... ')
+                              | 4
                         hr
                         button.btn.btn-outline-primary.my-2.my-sm-0(type='button' data-toggle='collapse' data-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample') 
                               span.fa.fa-comment(style='color:#adb5bd;')

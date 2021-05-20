@@ -3,7 +3,7 @@ const {openDb} = require("./db")
 //const tablesNames = ["IDENTIFICATION"]
 
 
-const tablesNames = ['EMAIL','PSEUDO','PASSWORD']
+const tablesNames = ['EMAIL','PSEUDO','PASSWORD','POST']
 //const tablename = "identification"
 
 /*async () => {
@@ -51,6 +51,18 @@ async () => {
   await db.run (`CREATE TABLE PASSWORD (
       password varchar(255),
       
+      id INTEGER PRIMARY KEY AUTOINCREMENT
+      );
+  `)
+
+}
+
+async () => {
+  let db = await openDb()
+  await db.run ('DROP TABLE POST');
+  await db.run (`CREATE TABLE POST (
+      post varchar(255),
+      post_owner varchar(255),
       id INTEGER PRIMARY KEY AUTOINCREMENT
       );
   `)
@@ -106,6 +118,17 @@ async function createTables_pseudo(db){
     return await Promise.all([cat])
   }
 
+  async function createTables_post(db){
+    const cat = db.run(`
+      CREATE TABLE IF NOT EXISTS POST(
+        post varchar(255),
+        post_owner varchar(255),
+        id INTEGER PRIMARY KEY AUTOINCREMENT
+        );
+    `)
+    return await Promise.all([cat])
+  }
+
 
 async function dropTables(db){
     return await Promise.all(tablesNames.map( tableName => {
@@ -121,5 +144,6 @@ async function dropTables(db){
     await createTables_email(db)
     await createTables_pseudo(db)
     await createTables_password(db)
+    await createTables_post(db)
 })()
   

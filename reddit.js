@@ -25,13 +25,13 @@ app.use(bodyParser.urlencoded({ extended: true }));  // support encoded bodies
 
 app.set('views', './views');
 app.set('view engine', 'jade');
-
+//var $ = require("jquery");
 
 
 app.get("/",async(req,res) => {
-   /* const db = await openDb()  
+    const db = await openDb()  
         
-    const post1 = await db.all(' SELECT * FROM EMAIL ')
+    /*const post1 = await db.all(' SELECT * FROM EMAIL ')
    console.log(post1) //print out database
    const post2 = await db.all(' SELECT * FROM PSEUDO ')
    console.log(post2)
@@ -39,9 +39,51 @@ app.get("/",async(req,res) => {
    console.log(post3)*/
    //const test = await db.all('SELECT pseudo_id FROM IDENTIFICATION WHERE email LIKE medbigi2000@gmail.com')
    //console.log(test)
+  //req.session.login = false
    if(req.session.login){
        
-        res.render('accueil')
+    a_post = await db.all('SELECT post FROM POST ')
+
+    
+    data_1 = {
+        the_post : a_post
+    }
+   /* console.log(data_1)
+    console.log(data_1.the_post)
+    console.log(data_1[])*/
+    /*$('#testBtn').click(function () {
+        var cnt=4;
+        var btn = $(this);
+        btn.button('loading');
+        setTimeout(function () {
+            cnt++;
+            btn.button('reset');
+            btn.text('  ' + cnt);
+        }, 1000);
+    });
+
+    $('#testBtnDown').click(function () {
+        var cnt=4;
+        var btn = $(this);
+        btn.button('loading');
+        setTimeout(function () {
+            if (cnt > 0) {
+                cnt--;
+            }
+            btn.button('reset');
+            btn.text('  ' + cnt);
+        }, 1000);*/
+        /*console.log(data_1)
+        console.log(data_1.the_post)*/
+
+        
+        data_f = data_1.the_post[0]
+    
+    res.render("accueil",data_f)
+
+        
+
+
    }
     else{        
         res.render("inscription",{login : req.session.login})
@@ -218,7 +260,7 @@ app.post("/login",async(req,res)=>{
                 d_pass : ins_acc_pass
             }
             
-            res.render('accueil',data)
+            res.redirect(302,"/")
           }
           else{
                 data = {
@@ -271,6 +313,30 @@ app.post("/login",async(req,res)=>{
     
     
 })
+
+
+
+app.post('/accueil',async(req,res)=>{
+
+    const db = await openDb()
+
+    const post = req.body.my_post
+    const pseudo_name = req.body.pseudo
+
+    db.run('INSERT INTO  POST (post,post_owner) VALUES(?,?)',[post,pseudo_name])
+
+    const test = await db.all('SELECT * FROM POST')
+   //console.log(test)
+    
+    
+   /*data = {
+        the_post : post
+    }
+    //console.log(data)*/
+    res.redirect(302,'/')
+})
+
+
 app.get('/logout',(req,res)=>{
     req.session.login = false
     res.redirect(302,"/")
