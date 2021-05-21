@@ -47,7 +47,7 @@ html(lang='en')
           .shadow.p-3.mb-5.bg-white.rounded 
             .card-body
               h3.card-title Create a post : 
-              form(action='/accueil' method='post')
+              form(action='/posts' method='post')
                 textarea.input.form-control.ml-1.shadow-none.textarea(name= 'my_post' placeholder='Add a post')
                 br
                 button.a.btn.btn-primary(type='submit')
@@ -69,6 +69,69 @@ html(lang='en')
                     a.nav-link(href='#') Advertisement
               .card-body
                 hr(size='8' align='right')
+
+                ul
+                  each val in data_1.list
+                    li
+                      .d-flex.justify-content-center.row
+                        .col-md-8
+                          .d-flex.flex-column.comment-section
+                            .bg-white.p-2
+                              .d-flex.flex-row.user-info
+                                img.rounded-circle(src='https://i.imgur.com/RpzrMR2.jpg' width='40')
+                                .d-flex.flex-column.justify-content-start.ml-2
+                                  span.d-block.font-weight-bold.name User Name
+                                  span.date.text-black-50 Shared publicly - Jan 2020
+                              .mt-2
+                              if(data_1.the_post[val])
+                                p= data_1.the_post[val].post
+                                  
+                            hr
+                            .bg-white
+                              .d-flex.flex-row.fs-12
+                                  button#testBtn.btn.btn-success.glyphicon.glyphicon-thumbs-up(type='button' data-loading-text=' ... ')
+                                    | 4
+                                  button#testBtnDown.btn.btn-success.glyphicon.glyphicon-thumbs-down(type='button' data-loading-text=' ... ')
+                                    | 4
+                              hr
+                              button.btn.btn-outline-primary.my-2.my-sm-0(type='button' data-toggle='collapse' data-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample') 
+                                    span.fa.fa-comment(style='color:#adb5bd;')
+                                    | Comments 
+                                    span.badge.bg-secondary 4
+                                #collapseExample.collapse
+                                  .shadow-lg.p-3.mb-5.bg-white.rounded 
+                                          .card-header
+                                            .d-flex.flex-row.user-info
+                                              img.rounded-circle(src='https://i.imgur.com/RpzrMR2.jpg' width='40')
+                                              .d-flex.flex-column.justify-content-start.ml-2
+                                                span.d-block.font-weight-bold.name User Name
+                                                span.date.text-black-50 Shared publicly - Jan 2020
+                                          .card-body
+                                          
+                                            if(data_1.the_comment[0])
+                                              p= data_1.the_comment[0].comment
+                                            small.text-muted Posted by Anonymous on 3/1/21 
+                                            hr
+                                            .bg-white
+                                              .d-flex.flex-row.fs-12
+                                                .btn
+                                                  button.btn.btn-outline-success.my-2.my-sm-0(type='button')
+                                                    span.fas.fa-angle-double-up(style='color:#4f4;')
+                                                    | UpVote
+                                                    span.badge.bg-secondary  4
+                                                  button.btn.btn-outline-danger.my-2.my-sm-0(type='button')
+                                                    span.fas.fa-angle-double-down(style='color:$red-500;')
+                                                    | DownVote
+                                                    span.badge.bg-secondary 4
+                                                  bg-light.p-2
+                                              hr 
+                                            .d-flex.flex-row.align-items-start
+                                              img.rounded-circle(src='https://i.imgur.com/RpzrMR2.jpg' width='40')
+                                              form(action='/comment' method='post')
+                                                textarea.input.form-control.ml-1.shadow-none.textarea(name= 'my_comment' placeholder='Add a Comment')
+                                                button.btn.btn-primary.btn-sm.shadow-none(type='submit') Reply 
+                                    br                           
+               // hr(size='8' align='right')
                 .d-flex.justify-content-center.row
                   .col-md-8
                     .d-flex.flex-column.comment-section
@@ -78,67 +141,10 @@ html(lang='en')
                           .d-flex.flex-column.justify-content-start.ml-2
                             span.d-block.font-weight-bold.name User Name
                             span.date.text-black-50 Shared publicly - Jan 2020
-                        .mt-2
-                        if(data_f)
-                          p= data_f.post
-                            
-                      hr
-                      .bg-white
-                        .d-flex.flex-row.fs-12
-                            button#testBtn.btn.btn-success.glyphicon.glyphicon-thumbs-up(type='button' data-loading-text=' ... ')
-                              | 4
-                            button#testBtnDown.btn.btn-success.glyphicon.glyphicon-thumbs-down(type='button' data-loading-text=' ... ')
-                              | 4
-                        hr
-                        button.btn.btn-outline-primary.my-2.my-sm-0(type='button' data-toggle='collapse' data-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample') 
-                              span.fa.fa-comment(style='color:#adb5bd;')
-                              | Comments 
-                              span.badge.bg-secondary 4
-                          #collapseExample.collapse
-                            .shadow-lg.p-3.mb-5.bg-white.rounded 
-                                    .card-header
-                                      .d-flex.flex-row.user-info
-                                        img.rounded-circle(src='https://i.imgur.com/RpzrMR2.jpg' width='40')
-                                        .d-flex.flex-column.justify-content-start.ml-2
-                                          span.d-block.font-weight-bold.name User Name
-                                          span.date.text-black-50 Shared publicly - Jan 2020
-                                    .card-body
-                                      p.card-text-center
-                                        | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.
-                                      small.text-muted Posted by Anonymous on 3/1/21 
-                                      hr
-                                      .bg-white
-                                        .d-flex.flex-row.fs-12
-                                          .btn
-                                            button.btn.btn-outline-success.my-2.my-sm-0(type='button')
-                                              span.fas.fa-angle-double-up(style='color:#4f4;')
-                                              | UpVote
-                                              span.badge.bg-secondary  4
-                                            button.btn.btn-outline-danger.my-2.my-sm-0(type='button')
-                                              span.fas.fa-angle-double-down(style='color:$red-500;')
-                                              | DownVote
-                                              span.badge.bg-secondary 4
-                                            bg-light.p-2
-                                        hr 
-                                      .d-flex.flex-row.align-items-start
-                                        img.rounded-circle(src='https://i.imgur.com/RpzrMR2.jpg' width='40')
-                                        textarea.form-control.ml-1.shadow-none.textarea( placeholder='Add a Comment')
-                                        button.btn.btn-primary.btn-sm.shadow-none(type='button') Reply 
-                                br                           
-                hr(size='8' align='right')
-                .d-flex.justify-content-center.row
-                  .col-md-8
-                    .d-flex.flex-column.comment-section
-                      .bg-white.p-2
-                        .d-flex.flex-row.user-info
-                          img.rounded-circle(src='https://i.imgur.com/RpzrMR2.jpg' width='40')
-                          .d-flex.flex-column.justify-content-start.ml-2
-                            span.d-block.font-weight-bold.name User Name
-                            span.date.text-black-50 Shared publicly - Jan 2020
                         hr
                         .mt-2
-                          p.comment-text
-                            | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        if(data_1.the_post[1])
+                          p= data_1.the_post[1].post 
                       hr
                       .bg-white
                         .d-flex.flex-row.fs-12
