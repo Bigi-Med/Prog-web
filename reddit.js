@@ -31,13 +31,16 @@ app.set('view engine', 'jade');
 var table = []
 var old_max = 0
 var profile_posts = []
+var date_ob = new Date()
+var date = ("0" + date_ob.getDate()).slice(-2)
 app.get("/",async(req,res) => {
     const db = await openDb()  
     
     //let table = []
   //req.session.login = false
    if(req.session.login){
-       
+    
+    console.log("date "+ date)
     a_post = await db.all('SELECT post FROM POST ')
     a_comment = await db.all('SELECT comment FROM COMMENT')
     id = await db.all('SELECT MAX(id) as maxID FROM POST')
