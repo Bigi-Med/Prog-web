@@ -41,13 +41,13 @@ app.get("/",async(req,res) => {
     a_post = await db.all('SELECT post FROM POST ')
     a_comment = await db.all('SELECT comment FROM COMMENT')
     id = await db.all('SELECT MAX(id) as maxID FROM POST')
-    console.log("id "+id)
+    //console.log("id "+id)
     if(a_post[0]){
         user = await db.all('SELECT post_owner FROM POST')
     }else{
         user = await db.all('SELECT post_owner FROM POST')
     }
-    console.log(id[0].maxID)
+   // console.log(id[0].maxID)
     for(var i=old_max;i<id[0].maxID;i++)
     {
         //i = i + id[0].maxID - old_max
@@ -67,7 +67,7 @@ app.get("/",async(req,res) => {
         the_user : user
         
     }
-    console.log(data_1.list)
+    //console.log(data_1.list)
     res.render("accueil",data_1)
     }
     else{        
@@ -103,14 +103,14 @@ app.post("/insert",async(req,res)=>{
     length_pass = acc_pass.length
     length_pseudo = pseudo_name.length
 
-    if(length_pass >= 6 && length_pseudo <=4 ){
+    if(length_pass >= 6 && length_pseudo >=4 ){
         db.run('INSERT INTO  EMAIL (email ) VALUES(?)',[email])
         db.run('INSERT INTO  PSEUDO (pseudo ) VALUES(?)',[pseudo_name])
         db.run('INSERT INTO  PASSWORD  (password ) VALUES(?)',[acc_pass])
         res.redirect(302,"/")
     }
     else {
-        if((length_pass < 6) && (length_pseudo <= 4) ){
+        if((length_pass < 6) && (length_pseudo >= 4) ){
             data ={
                 error_pass : "password must have at least 6 characters"
             }
@@ -119,16 +119,16 @@ app.post("/insert",async(req,res)=>{
             return
             
         }
-        if ((length_pseudo > 4) && (length_pass >= 6)){
+        if ((length_pseudo < 4) && (length_pass >= 6)){
             data ={
-                error_pseudo : "pseudo name must not exceed 4 characters"
+                error_pseudo : "pseudo name must have at least  4 characters"
             }
             res.render("new_account",data)
             data = {} //reset object for next query
             return
             
         }
-        if ((length_pseudo > 4) && (length_pass < 6))
+        if ((length_pseudo < 4) && (length_pass < 6))
             data ={
                 error_pseudo : "pseudo name must not exceed 4 characters",
                 error_pass : "password must have at least 6 characters"
@@ -265,14 +265,14 @@ app.put('/posts/:id/vote-down', (req, res) => {
 app.get('/my_profil',async(re,res)=>{
     const db = await openDb()
     ever = await db.all('SELECT * FROM TEMP')
-    console.log(ever)
+    //console.log(ever)
     id_temp = await db.all('SELECT MAX(id) as maxID FROM TEMP')
-    console.log("id temp " +id_temp[0].maxID)
+    //console.log("id temp " +id_temp[0].maxID)
     user_temp = await db.all('SELECT user FROM TEMP WHERE id = ?',[id_temp[0].maxID])
-    console.log(user_temp)
+    //console.log(user_temp)
     post_for_profil = await db.all('SELECT post FROM POST WHERE post_owner = ?',[user_temp[0].user])
     nb_posts_user = await db.all('SELECT COUNT(id) as cnt FROM POST WHERE post_owner = ?',[user_temp[0].user])
-    console.log("nb of posts " + nb_posts_user[0].cnt)
+    //console.log("nb of posts " + nb_posts_user[0].cnt)
 
     for(var i=0;i<nb_posts_user[0].cnt;i++){
         profile_posts.push(i)
