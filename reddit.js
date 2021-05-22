@@ -7,6 +7,7 @@ const session = require('express-session');
 const { openDb } = require('./db');
 const SQLiteStore = require('connect-sqlite3')(session);
 
+app.use(express.static('Prog-web'));
 
 const sess = {
     store: new SQLiteStore,
@@ -39,7 +40,11 @@ app.get("/",async(req,res) => {
     a_post = await db.all('SELECT post FROM POST ')
     a_comment = await db.all('SELECT comment FROM COMMENT')
     id = await db.all('SELECT MAX(id) as maxID FROM POST')
-    
+    if(a_post[0]){
+        user = await db.all('SELECT post_owner FROM POST')
+    }else{
+        user = await db.all('SELECT post_owner FROM POST')
+    }
     for(var i=old_max;i<id[0].maxID;i++)
     {
         //i = i + id[0].maxID - old_max
@@ -55,7 +60,8 @@ app.get("/",async(req,res) => {
         the_post : a_post,
         the_comment : a_comment,
         posts_number : id,
-        list : table
+        list : table,
+        the_user : user
     }
     console.log(data_1.list)
     res.render("accueil",data_1)
@@ -181,7 +187,7 @@ app.post("/login",async(req,res)=>{
                 d_pseudo : ins_pseudo_name,
                 d_pass : ins_acc_pass
             }
-            
+            db.run('INSERT INTO TEMP (user) VALUES(?)', [ins_pseudo_name])
             res.redirect(302,"/")
           }
           else{
@@ -207,9 +213,14 @@ app.post('/posts',async(req,res)=>{
     const db = await openDb()
 
     const post = req.body.my_post
-    
-    const pseudo_name = req.body.pseudo
-    db.run('INSERT INTO  POST (post,post_owner) VALUES(?,?)',[post,pseudo_name])
+    id = await db.all('SELECT MAX(id) as maxID FROM TEMP')
+    const user_ps = await db.all('SELECT user FROM TEMP')
+
+    var upVotes = [];
+    var downVotes = [];
+    var voteScore = 0;
+
+    db.run('INSERT INTO  POST (post,post_owner,upVotes,downVotes,voteScore) VALUES(?,?,?,?,?)',[post,user_ps[id[0].maxID-1].user,upVotes ,downVotes,voteScore])
     
     res.redirect(302,'/')
 })
@@ -228,6 +239,27 @@ app.get('/logout',(req,res)=>{
     res.redirect(302,"/")
 })
 
+app.put('/posts/:id/vote-up', (req, res) => {
+
+      
+      post.findById(req.params.id).then((err, post) => {
+      upVotes.push(req.user._id);
+      voteScore += 1;
+      post.save();
+  
+      return res.status(200);
+    });
+  });
+  
+app.put('/posts/:id/vote-down', (req, res) => {
+    post.findById(req.params.id).then((err, post) => {
+    post.downVotes.push(req.user._id);
+    post.voteScore -= 1;
+    post.save();
+
+    return res.status(200);
+  });
+});
 
 app.listen(port,() => {
     console.log("Listening on port ", port)

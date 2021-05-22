@@ -3,7 +3,7 @@ const {openDb} = require("./db")
 //const tablesNames = ["IDENTIFICATION"]
 
 
-const tablesNames = ['EMAIL','PSEUDO','PASSWORD','POST','COMMENT']
+const tablesNames = ['EMAIL','PSEUDO','PASSWORD','POST','COMMENT','TEMP']
 //const tablename = "identification"
 
 /*async () => {
@@ -82,6 +82,17 @@ async () => {
 
 }
 
+async () => {
+  let db = await openDb()
+  await db.run ('DROP TABLE TEMP');
+  await db.run (`CREATE TABLE TEMP (
+      user varchar(255),
+      
+      id INTEGER PRIMARY KEY AUTOINCREMENT
+      );
+  `)
+
+}
 
 /*async function createTables(db){
     const cat = db.run(`
@@ -136,6 +147,9 @@ async function createTables_pseudo(db){
       CREATE TABLE IF NOT EXISTS POST(
         post varchar(255),
         post_owner varchar(255),
+        upVotes INTEGER,
+        downVotes INTEGER,
+        voteScore INTEGER,
         id INTEGER PRIMARY KEY AUTOINCREMENT
         );
     `)
@@ -148,6 +162,16 @@ async function createTables_pseudo(db){
       comment varchar(255),
       comment_owner varchar(255),
       comment_post varchar (255),
+      id INTEGER PRIMARY KEY AUTOINCREMENT
+      );
+    `)
+    return await Promise.all([cat])
+  }
+
+  async function createTables_temp(db){
+    const cat = db.run(`
+      CREATE TABLE IF NOT EXISTS TEMP(
+      user varchar(255),
       id INTEGER PRIMARY KEY AUTOINCREMENT
       );
     `)
@@ -171,5 +195,6 @@ async function dropTables(db){
     await createTables_password(db)
     await createTables_post(db)
     await createTables_comment(db)
+    await createTables_temp(db)
 })()
   
