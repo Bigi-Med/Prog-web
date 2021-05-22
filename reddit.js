@@ -30,6 +30,7 @@ app.set('view engine', 'jade');
 
 var table = []
 var old_max = 0
+var profile_posts = []
 app.get("/",async(req,res) => {
     const db = await openDb()  
     
@@ -40,11 +41,13 @@ app.get("/",async(req,res) => {
     a_post = await db.all('SELECT post FROM POST ')
     a_comment = await db.all('SELECT comment FROM COMMENT')
     id = await db.all('SELECT MAX(id) as maxID FROM POST')
+    console.log("id "+id)
     if(a_post[0]){
         user = await db.all('SELECT post_owner FROM POST')
     }else{
         user = await db.all('SELECT post_owner FROM POST')
     }
+    console.log(id[0].maxID)
     for(var i=old_max;i<id[0].maxID;i++)
     {
         //i = i + id[0].maxID - old_max
@@ -62,6 +65,7 @@ app.get("/",async(req,res) => {
         posts_number : id,
         list : table,
         the_user : user
+        
     }
     console.log(data_1.list)
     res.render("accueil",data_1)
@@ -234,10 +238,7 @@ app.post('/comment',async(req,res)=>{
 })
 
 
-app.get('/logout',(req,res)=>{
-    req.session.login = false
-    res.redirect(302,"/")
-})
+
 
 app.put('/posts/:id/vote-up', (req, res) => {
 
@@ -260,6 +261,37 @@ app.put('/posts/:id/vote-down', (req, res) => {
     return res.status(200);
   });
 });
+
+app.get('/my_profil',async(re,res)=>{
+    const db = await openDb()
+    ever = await db.all('SELECT * FROM TEMP')
+    console.log(ever)
+    id_temp = await db.all('SELECT MAX(id) as maxID FROM TEMP')
+    console.log("id temp " +id_temp[0].maxID)
+    user_temp = await db.all('SELECT user FROM TEMP WHERE id = ?',[id_temp[0].maxID])
+    console.log(user_temp)
+    post_for_profil = await db.all('SELECT post FROM POST WHERE post_owner = ?',[user_temp[0].user])
+    nb_posts_user = await db.all('SELECT COUNT(id) as cnt FROM POST WHERE post_owner = ?',[user_temp[0].user])
+    console.log("nb of posts " + nb_posts_user[0].cnt)
+
+    for(var i=0;i<nb_posts_user[0].cnt;i++){
+        profile_posts.push(i)
+    }
+
+    
+
+    data = {
+        nb_profil_post : profile_posts,
+        profil_post : post_for_profil
+    }
+    profile_posts = []
+    res.render("profil",data)
+})
+
+app.get('/logout',(req,res)=>{
+    req.session.login = false
+    res.redirect(302,"/")
+})
 
 app.listen(port,() => {
     console.log("Listening on port ", port)
