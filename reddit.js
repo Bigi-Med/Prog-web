@@ -33,6 +33,12 @@ var old_max = 0
 var profile_posts = []
 var date_ob = new Date()
 var date = ("0" + date_ob.getDate()).slice(-2)
+var year = date_ob.getFullYear();
+var month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+var hours = date_ob.getHours();
+let minutes = date_ob.getMinutes();
+let seconds = date_ob.getSeconds();
+var full_date =  date +"/" + month + "/" + year +"," + hours +":" + minutes + ":" +seconds
 app.get("/",async(req,res) => {
     const db = await openDb()  
     
@@ -40,15 +46,17 @@ app.get("/",async(req,res) => {
   //req.session.login = false
    if(req.session.login){
     
-    console.log("date "+ date)
+    //console.log("date "+ date +"/" + month + "/" + year)
     a_post = await db.all('SELECT post FROM POST ')
-    a_comment = await db.all('SELECT comment FROM COMMENT')
+    a_comment = await db.all('SELECT comment FROM COMMENT') 
+    the_date = await db.all('SELECT post_date FROM POST')
+    //console.log(the_date)
     id = await db.all('SELECT MAX(id) as maxID FROM POST')
     //console.log("id "+id)
     if(a_post[0]){
         user = await db.all('SELECT post_owner FROM POST')
     }else{
-        user = await db.all('SELECT post_owner FROM POST')
+        user = await db.all('SELECT user FROM TEMP')
     }
    // console.log(id[0].maxID)
     for(var i=old_max;i<id[0].maxID;i++)
@@ -61,13 +69,15 @@ app.get("/",async(req,res) => {
             table.push(i)
         }
     }
+    //console.log("user " + user )
     old_max = id[0].maxID
     data_1 = {
         the_post : a_post,
         the_comment : a_comment,
         posts_number : id,
         list : table,
-        the_user : user
+        the_user : user,
+        current_date : the_date
         
     }
     //console.log(data_1.list)
@@ -227,7 +237,8 @@ app.post('/posts',async(req,res)=>{
     var downVotes = [];
     var voteScore = 0;
 
-    db.run('INSERT INTO  POST (post,post_owner,upVotes,downVotes,voteScore) VALUES(?,?,?,?,?)',[post,user_ps[id[0].maxID-1].user,upVotes ,downVotes,voteScore])
+    db.run('INSERT INTO  POST (post,post_owner,upVotes,downVotes,voteScore,post_date) VALUES(?,?,?,?,?,?)',[post,user_ps[id[0].maxID-1].user,upVotes ,downVotes,voteScore,full_date])
+    //db.run('INSERT INTO POST (post,post_owner,post_date)  VALUES(?,?,?)',[post,user_ps[id[0].maxID-1].user,full_date] )
     
     res.redirect(302,'/')
 })

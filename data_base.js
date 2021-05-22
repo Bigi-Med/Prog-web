@@ -63,6 +63,10 @@ async () => {
   await db.run (`CREATE TABLE POST (
       post varchar(255),
       post_owner varchar(255),
+      upVotes INTEGER,
+      downVotes INTEGER,
+      voteScore INTEGER,
+      post_date varchar(255),
       id INTEGER PRIMARY KEY AUTOINCREMENT
       );
   `)
@@ -75,6 +79,9 @@ async () => {
   await db.run (`CREATE TABLE COMMENT (
       comment varchar(255),
       comment_owner varchar(255),
+      upVotes INTEGER,
+      downVotes INTEGER,
+      voteScore INTEGER,
       comment_post varchar (255),
       id INTEGER PRIMARY KEY AUTOINCREMENT
       );
@@ -150,6 +157,7 @@ async function createTables_pseudo(db){
         upVotes INTEGER,
         downVotes INTEGER,
         voteScore INTEGER,
+        post_date varchar(255),
         id INTEGER PRIMARY KEY AUTOINCREMENT
         );
     `)
