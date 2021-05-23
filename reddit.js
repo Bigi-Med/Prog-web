@@ -39,37 +39,44 @@ var hours = date_ob.getHours();
 let minutes = date_ob.getMinutes();
 let seconds = date_ob.getSeconds();
 var full_date =  date +"/" + month + "/" + year +"," + hours +":" + minutes + ":" +seconds
+
 app.get("/",async(req,res) => {
     const db = await openDb()  
     
-    //let table = []
-  //req.session.login = false
-   if(req.session.login){
+    if(req.session.login){
     
-    //console.log("date "+ date +"/" + month + "/" + year)
     a_post = await db.all('SELECT post FROM POST ')
     a_comment = await db.all('SELECT comment FROM COMMENT') 
     the_date = await db.all('SELECT post_date FROM POST')
-    //console.log(the_date)
     id = await db.all('SELECT MAX(id) as maxID FROM POST')
-    //console.log("id "+id)
+    id_current = await db.all('SELECT MAX(id) as maxID_user FROM TEMP')
+    current_user = await db.all('SELECT user FROM TEMP WHERE id =?',[id_current[0].maxID_user])
+    notif_post = await db.all('SELECT post_owner FROM POST ')
+    
     if(a_post[0]){
         user = await db.all('SELECT post_owner FROM POST')
     }else{
         user = await db.all('SELECT user FROM TEMP')
     }
-   // console.log(id[0].maxID)
+    if(a_comment[0]){
+        user_comm = await db.all('SELECT comment_owner FROM COMMENT')
+    }else{
+        user_comm = await db.all('SELECT user FROM TEMP')
+    }
+
+ 
     for(var i=old_max;i<id[0].maxID;i++)
     {
-        //i = i + id[0].maxID - old_max
+      
         if (i == null)
         {
-            table.push(0)
+            table.unshift(0)
         } else{
-            table.push(i)
+            table.unshift(i)
         }
+       
     }
-    //console.log("user " + user )
+    
     old_max = id[0].maxID
     data_1 = {
         the_post : a_post,
@@ -77,34 +84,25 @@ app.get("/",async(req,res) => {
         posts_number : id,
         list : table,
         the_user : user,
-        current_date : the_date
+        the_user_comm : user_comm,
+        current_date : the_date,
+        my_user : current_user,
+        notif_post_user : notif_post
         
     }
-    //console.log(data_1.list)
+    
     res.render("accueil",data_1)
     }
     else{        
         res.render("inscription",{login : req.session.login})
     }
-
-
-    
 })
-
-
 
 
 app.get("/create_account",(req,res)=>{
     
     res.render("new_account",{})
 })
-
-app.get("/profil",(req,res)=>{
-    
-    res.render("profil",{})
-})
-
-
 
 app.post("/insert",async(req,res)=>{
 
@@ -150,29 +148,20 @@ app.post("/insert",async(req,res)=>{
             res.render("new_account",data)
             data={} //reset object for next query
             return
-            
-            
-            
-    }
+     }
 })
 
 app.post("/login",async(req,res)=>{
     const db = await openDb()
-    
-   
-    
     const ins_email = req.body.ins_mail
     const ins_pseudo_name = req.body.ins_pseudo
     const ins_acc_pass = req.body.ins_pass
     
-
-     let email_id = await db.all(' SELECT id FROM EMAIL WHERE email = ?',[ins_email]) 
-     let pseudo_id = await db.all(' SELECT id FROM PSEUDO WHERE pseudo = ? ',[ins_pseudo_name]) 
-     let password_id = await db.all(' SELECT id FROM PASSWORD WHERE password  = ?' ,[ins_acc_pass]) 
+    let email_id = await db.all(' SELECT id FROM EMAIL WHERE email = ?',[ins_email]) 
+    let pseudo_id = await db.all(' SELECT id FROM PSEUDO WHERE pseudo = ? ',[ins_pseudo_name]) 
+    let password_id = await db.all(' SELECT id FROM PASSWORD WHERE password  = ?' ,[ins_acc_pass]) 
     
-         
-    
-     if(Object.keys(email_id).length === 0 && email_id.constructor === Array){
+    if(Object.keys(email_id).length === 0 && email_id.constructor === Array){
       email = {
           id : -1
       }
@@ -238,7 +227,6 @@ app.post('/posts',async(req,res)=>{
     var voteScore = 0;
 
     db.run('INSERT INTO  POST (post,post_owner,upVotes,downVotes,voteScore,post_date) VALUES(?,?,?,?,?,?)',[post,user_ps[id[0].maxID-1].user,upVotes ,downVotes,voteScore,full_date])
-    //db.run('INSERT INTO POST (post,post_owner,post_date)  VALUES(?,?,?)',[post,user_ps[id[0].maxID-1].user,full_date] )
     
     res.redirect(302,'/')
 })
@@ -246,58 +234,82 @@ app.post('/posts',async(req,res)=>{
 app.post('/comment',async(req,res)=>{
     const db = await openDb()
     const comment = req.body.my_comment
-    const pseudo_name = req.body.pseudo
-    db.run('INSERT INTO  COMMENT (comment,comment_owner) VALUES(?,?)',[comment,pseudo_name])
+    id = await db.all('SELECT MAX(id) as maxID FROM TEMP')
+    const user_ps = await db.all('SELECT user FROM TEMP')
+    db.run('INSERT INTO  COMMENT (comment,comment_owner) VALUES(?,?)',[comment,user_ps[id[0].maxID-1].user])
     res.redirect(302,'/')    
 })
 
+/*app.get('/comment',async(req,res)=>{
+    const db = await openDb()
+    const param = req.query.p1
+
+    nb_of_post =  id = await db.all('SELECT MAX(id) as maxID_post FROM POST')
+    post_id = param - nb_of_posts[0].maxID_post
+    db.run('INSERT INTO POST(cmnt_number)  VALUES(?)',[3])
+    post_id = Math.abs(post_id)
 
 
+    a_comment = await db.all('SELECT comment FROM COMMENT ')
+    id = await db.all('SELECT MAX(id) as maxID FROM COMMENT')
+    id_current = await db.all('SELECT MAX(id) as maxID_user FROM TEMP')
+    current_user = await db.all('SELECT user FROM TEMP WHERE id =?',[id_current[0].maxID_user])
 
-app.put('/posts/:id/vote-up', (req, res) => {
-
+    if(a_comment[0]){
+        user_comm = await db.all('SELECT comment_owner FROM COMMENT')
+    }else{
+        user_comm = await db.all('SELECT user FROM TEMP')
+    }
+    
+    for(var i=old_max_cmnt;i<id[0].maxID;i++)
+    {
       
-      post.findById(req.params.id).then((err, post) => {
-      upVotes.push(req.user._id);
-      voteScore += 1;
-      post.save();
-  
-      return res.status(200);
-    });
-  });
-  
-app.put('/posts/:id/vote-down', (req, res) => {
-    post.findById(req.params.id).then((err, post) => {
-    post.downVotes.push(req.user._id);
-    post.voteScore -= 1;
-    post.save();
+        if (i == null)
+        {
+            table_cmnt.unshift(0)
+        } else{
+            table_cmnt.unshift(i)
+        }
+       
+    }
+    
+    old_max = id[0].maxID
 
-    return res.status(200);
-  });
-});
+    data_1 = {
+        the_comment : a_comment,
+        posts_number : id,
+        list : table_cmnt,
+        the_user : user_comm,
+    }
+    res.render("accueil",data_1)
+})*/
 
-app.get('/my_profil',async(re,res)=>{
+
+
+
+
+  app.get('/my_profil',async(re,res)=>{
     const db = await openDb()
     ever = await db.all('SELECT * FROM TEMP')
-    //console.log(ever)
     id_temp = await db.all('SELECT MAX(id) as maxID FROM TEMP')
-    //console.log("id temp " +id_temp[0].maxID)
     user_temp = await db.all('SELECT user FROM TEMP WHERE id = ?',[id_temp[0].maxID])
-    //console.log(user_temp)
     post_for_profil = await db.all('SELECT post FROM POST WHERE post_owner = ?',[user_temp[0].user])
     nb_posts_user = await db.all('SELECT COUNT(id) as cnt FROM POST WHERE post_owner = ?',[user_temp[0].user])
-    //console.log("nb of posts " + nb_posts_user[0].cnt)
-
+    the_date = await db.all('SELECT post_date FROM POST')
+    comment = await db.all('SELECT comment FROM COMMENT')
+    
     for(var i=0;i<nb_posts_user[0].cnt;i++){
-        profile_posts.push(i)
+        profile_posts.unshift(i)
     }
 
     
-
     data = {
         nb_profil_post : profile_posts,
-        profil_post : post_for_profil
+        profil_post : post_for_profil,
+        current_date : the_date,
+        my_comment : comment
     }
+    
     profile_posts = []
     res.render("profil",data)
 })
