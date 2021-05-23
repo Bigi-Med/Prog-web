@@ -240,55 +240,8 @@ app.post('/comment',async(req,res)=>{
     res.redirect(302,'/')    
 })
 
-/*app.get('/comment',async(req,res)=>{
-    const db = await openDb()
-    const param = req.query.p1
 
-    nb_of_post =  id = await db.all('SELECT MAX(id) as maxID_post FROM POST')
-    post_id = param - nb_of_posts[0].maxID_post
-    db.run('INSERT INTO POST(cmnt_number)  VALUES(?)',[3])
-    post_id = Math.abs(post_id)
-
-
-    a_comment = await db.all('SELECT comment FROM COMMENT ')
-    id = await db.all('SELECT MAX(id) as maxID FROM COMMENT')
-    id_current = await db.all('SELECT MAX(id) as maxID_user FROM TEMP')
-    current_user = await db.all('SELECT user FROM TEMP WHERE id =?',[id_current[0].maxID_user])
-
-    if(a_comment[0]){
-        user_comm = await db.all('SELECT comment_owner FROM COMMENT')
-    }else{
-        user_comm = await db.all('SELECT user FROM TEMP')
-    }
-    
-    for(var i=old_max_cmnt;i<id[0].maxID;i++)
-    {
-      
-        if (i == null)
-        {
-            table_cmnt.unshift(0)
-        } else{
-            table_cmnt.unshift(i)
-        }
-       
-    }
-    
-    old_max = id[0].maxID
-
-    data_1 = {
-        the_comment : a_comment,
-        posts_number : id,
-        list : table_cmnt,
-        the_user : user_comm,
-    }
-    res.render("accueil",data_1)
-})*/
-
-
-
-
-
-  app.get('/my_profil',async(re,res)=>{
+app.get('/my_profil',async(re,res)=>{
     const db = await openDb()
     ever = await db.all('SELECT * FROM TEMP')
     id_temp = await db.all('SELECT MAX(id) as maxID FROM TEMP')
